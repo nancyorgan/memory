@@ -1,0 +1,22 @@
+#!/usr/bin/env python
+######################################################
+########### card-flip memory game ####################
+
+# initialize the board
+
+
+
+
+# select two cards
+
+
+
+
+# check if they are equal
+
+
+
+
+# if they are equal, add a point. If not, unflip the cards.
+
+
