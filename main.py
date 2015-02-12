@@ -11,12 +11,14 @@ class PRNG(object):
     x = self.state
     x = x + 1
     x = x << 8 | x >> 8
-    x = x * 997
-    x = x % 998
+    x = x * 997 * 997
+    x = x % 1024
     self.state = x
     return self.state
 
-# todo: ask user for time
+print "What is the time?"
+s = raw_input()
+
 # todo: convert time to integer
 # todo: pass PRNG integer to seed the random number generator
 prng = PRNG(0)
