@@ -17,14 +17,32 @@ class PRNG(object):
     return self.state
 
 print "What is the time?"
-s = raw_input()
+input_string = raw_input()
+print "How wide would you like the board to be?"
+input_width = int(raw_input())
+print "How tall would you like the board to be?"
+input_height = int(raw_input())
 
-# todo: convert time to integer
-# todo: pass PRNG integer to seed the random number generator
-prng = PRNG(0)
+# Take the input string and make them random.
+seed = 0
+for character in input_string:
+  seed = seed << 1
+  seed = seed ^ ord(character)
 
-for i in range(10):
-  print prng.next()
+# Now make seed more random
+prng = PRNG(seed)
+
+# Create the letters list
+letters = []
+alphabet = map(chr, range(65, 91))
+for i in range(input_width * input_height/2):
+  alphabet_index = (prng.next() % 26)
+  letter = alphabet[alphabet_index]
+  letters.append(letter)
+
+# Create the board
+
+
 
 # initialize the board with a make_board function
 #def chunks(l, n):
