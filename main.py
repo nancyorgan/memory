@@ -40,33 +40,42 @@ for i in range(input_width * input_height/2):
   letter = alphabet[alphabet_index]
   letters.append(letter)
 
-# Create the board
+letters = letters + letters
+#print letters
+
+scrambled_letters = []
+for i in range(len(letters)):
+  scrambled_index = (prng.next() % len(letters))
+  single_letter = letters.pop(scrambled_index)
+  scrambled_letters.append(single_letter)
+
+# Make the board
+def chunks(l, n):
+    n = max(1, n)
+    return [l[i:i + n] for i in range(0, len(l), n)]
+
+front_board = chunks(scrambled_letters, input_width)
+for line in front_board:
+  print line
+
+
+# Make the selection board
+# need to make each item a string so can pad with spaces
+board_length = range(input_width * input_height)
+for i in board_length:
+  board_length = i.center(4, "\ ")
+
+selection_board = chunks(range(board_length), input_width)
+for line in selection_board:
+  print line
 
 
 
-# initialize the board with a make_board function
-#def chunks(l, n):
-#    n = max(1, n)
-#    return [l[i:i + n] for i in range(0, len(l), n)]
-
-#def card_front(board_width, board_length):
-#  letters = map(chr, range(65, 91))
-#  board_letters = random.sample(letters, board_width*board_length/2)*2
-#  scrambled_board = random.sample(board_letters, len(board_letters))
-#  board = np.matrix(chunks(scrambled_board, board_width))
-#  print board
-
-#myboard = card_front(4,4)
-#print myboard
 
 # select two cards
 
 
-
-
 # check if they are equal
-
-
 
 
 # if they are equal, add a point. If not, unflip the cards.
