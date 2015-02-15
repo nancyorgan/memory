@@ -41,7 +41,6 @@ for i in range(input_width * input_height/2):
   letters.append(letter)
 
 letters = letters + letters
-#print letters
 
 scrambled_letters = []
 for i in range(len(letters)):
@@ -60,19 +59,34 @@ for line in front_board:
 
 
 # Make the selection board
-# need to make each item a string so can pad with spaces
-board_length = range(input_width * input_height)
-for i in board_length:
-  board_length = i.center(4, "\ ")
+board_length = range(1, (input_width * input_height + 1))
+selection_cards = [str(x) for x in board_length]
+selection_cards = [x.center(4, " ") for x in selection_cards]
 
-selection_board = chunks(range(board_length), input_width)
+selection_board = chunks(selection_cards, input_width)
 for line in selection_board:
   print line
 
 
-
-
 # select two cards
+print "Select your first card"
+first_selection = raw_input()
+print "Select your second card"
+second_selection = raw_input()
+
+def location(choice, width):
+    row,column = divmod(int(choice), int(width)) #where width is the width of the game board
+    mapped_location = (row,column-1)
+    return mapped_location
+
+first = location(first_selection, input_width)
+second = location(second_selection, input_width)
+
+
+
+
+
+
 
 
 # check if they are equal
