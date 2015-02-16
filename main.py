@@ -59,7 +59,7 @@ for line in front_board:
 
 
 # Make the selection board
-board_length = range(1, (input_width * input_height + 1))
+board_length = range(input_width * input_height)
 selection_cards = [str(x) for x in board_length]
 selection_cards = [x.center(4, " ") for x in selection_cards]
 
@@ -67,29 +67,35 @@ selection_board = chunks(selection_cards, input_width)
 for line in selection_board:
   print line
 
-
-# select two cards
-print "Select your first card"
-first_selection = raw_input()
-print "Select your second card"
-second_selection = raw_input()
-
 def location(choice, width):
-    row,column = divmod(int(choice), int(width)) #where width is the width of the game board
-    mapped_location = (row,column-1)
-    return mapped_location
+    row,column = divmod(choice, width)
+    return row,column
 
-first = location(first_selection, input_width)
-second = location(second_selection, input_width)
+############ Repeat this! ##############
+points = 0
+while points < len(scrambled_letters)/2 :
+# select first card, connect it to the front_board card and print
+  print "Select your first card"
+  first_selection = int(raw_input())
+  j = location(first_selection, input_width)
+  first = front_board[j[0]][j[1]]
+  print "Card face %s : " % first
 
+  print "Select your second card"
+  second_selection = int(raw_input())
+  k = location(second_selection, input_width)
+  second = front_board[k[0]][k[1]]
+  print "Card face %s : " % second
 
+# Compare first and second
+  if first == second:
+    selection_board[j[0]][j[1]] = "    "
+    selection_board[k[0]][k[1]] = "    "
+    points += 1
+    for i in selection_board:
+      print i
+  else:
+    for i in selection_board:
+      print i
 
-
-
-
-
-
-# check if they are equal
-
-
-# if they are equal, add a point. If not, unflip the cards.
+  print "Your score: %s" % points
