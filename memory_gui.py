@@ -13,6 +13,8 @@ class HelloWorld(cocos.layer.ColorLayer):
         self.posx = 100
         self.posy = 240
         self.text = cocos.text.Label('No mouse events yet', font_size=18, x=self.posx, y=self.posy )
+
+
         self.add( self.text )
 
         label = cocos.text.Label('This is a game.',
@@ -44,17 +46,20 @@ class HelloWorld(cocos.layer.ColorLayer):
         self.add(sprite4)
 
     def update_text (self, x, y):
-        text = 'Mouse @ %d,%d' % (x, y)
-        self.text.element.text = text
-        self.text.element.x = self.posx
-        self.text.element.y = self.posy
+        if sprite1.contains(self):
+            text = 'IN SPRITE'
+            self.text.element.text = text
+            self.text.element.x = self.posx
+            self.text.element.y = self.posy
+        else:
+            text = 'Mouse @ %d,%d' % (x, y)
+            self.text.element.text = text
+            self.text.element.x = self.posx
+            self.text.element.y = self.posy
+
 
     def on_mouse_motion (self, x, y, dx, dy):
-        self.update_text (x, y)
-
-    def in_sprite (self, x, y):
-        pass
-
+            self.update_text (x, y)
 
     def on_mouse_drag (self, x, y, dx, dy, buttons, modifiers):
         self.update_text (x, y)
@@ -62,8 +67,6 @@ class HelloWorld(cocos.layer.ColorLayer):
     def on_mouse_press (self, x, y, buttons, modifiers):
         self.posx, self.posy = director.get_virtual_coordinates (x, y)
         self.update_text (x,y)
-        # add if to check if sprite contains point
-
 
 
 if __name__ == "__main__":
