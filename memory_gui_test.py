@@ -6,6 +6,8 @@ from cocos.actions import *
 from cocos.director import director
 from cocos.layer import base_layers
 
+import pyglet
+import cocos
 image_files = ['resources/cat.png', 'resources/rabbit.png', 'resources/deer.png',
                'resources/worm.png', 'resources/martha.png', 'resources/planet.png']
 blank_file = 'resources/blank.png'
@@ -18,20 +20,34 @@ class Cards(object):
         self.image.opacity = 0
 
 
-def build_deck(options, height, width):
-     cards = random.sample(options, ((height*width)/2))*2
-     shuffled = random.sample(cards, len(cards))
-     x_position = []
-     for i in range(width):
-         x_position.append(40 + (120/2) + 120*i + 20*i)
-     x_position = [x for x in x_position for _ in range(height)]
-     y_position = []
-     for i in range(height):
-         y_position.append(40 + (120/2) + 120*i + 20*i)
-     y_position = y_position*width
-     deck = zip(shuffled, x_position, y_position)
-     print deck
-     print len(deck)
+class Deck(object):
+    def __init__(self, options, height, width):
+        self.height = height
+        self.width = width
+
+        cards = random.sample(options, ((height*width)/2))*2
+        shuffled = random.sample(cards, len(cards))
+        self.shuffled = shuffled
+
+        x_position = []
+        for i in range(width):
+            x_position.append(40 + (120/2) + 120*i + 20*i)
+        x_position = [x for x in x_position for _ in range(height)]
+        self.x_position = x_position
+
+        y_position = []
+        for i in range(height):
+            y_position.append(40 + (120/2) + 120*i + 20*i)
+        y_position = y_position*width
+        self.y_position = y_position
+
+        self.deck = zip(shuffled, x_position, y_position)
+
+nancy = Deck(image_files, 2, 3)
+cocos.director.director.init(resizable=True)
+wormcard = Cards(nancy.shuffled[0], blank_file)
+
+build_deck(image_files, 2,3)
 
 class Martha(cocos.layer.ColorLayer):
     is_event_handler = True
