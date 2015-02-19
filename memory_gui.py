@@ -35,25 +35,10 @@ class Martha(cocos.layer.ColorLayer):
         print(loaded_images)
 
         blank = pyglet.image.load('resources/blank.png')
-        #cat = pyglet.image.load('/Users/nancyorgan/Documents/memory/resources/cat.png')
-        #rabbit = pyglet.image.load('/Users/nancyorgan/Documents/memory/resources/rabbit.png')
-        #deer = pyglet.image.load('/Users/nancyorgan/Documents/memory/resources/deer.png')
-        #worm = pyglet.image.load('/Users/nancyorgan/Documents/memory/resources/worm.png')
 
         sprites = []
         for image in loaded_images:
             sprites.append([cocos.sprite.Sprite(image), cocos.sprite.Sprite(blank)])
-
-        #blank1 = cocos.sprite.Sprite(blank)
-        #blank2 = cocos.sprite.Sprite(blank)
-        #blank3 = cocos.sprite.Sprite(blank)
-        ##blank4 = cocos.sprite.Sprite(blank)
-        #blank5 = cocos.sprite.Sprite(blank)
-        #blank6 = cocos.sprite.Sprite(blank)
-        #cat  =   cocos.sprite.Sprite(cat)
-        #rabbit = cocos.sprite.Sprite(rabbit)
-        #deer = cocos.sprite.Sprite(deer)
-        #worm = cocos.sprite.Sprite(worm)
 
         positions = [(150,300), (300,300), (450,300), (150,150), (300,150), (450,150)]
         for position, sprite in zip(positions, sprites):
@@ -63,53 +48,6 @@ class Martha(cocos.layer.ColorLayer):
             self.add(sprite[1])
 
 
-
-       # sprints[0][0].position = 150, 300
-       # sprints[0][0].position = 150, 300
-       # blank1.position = 150,300
-       # blank2.position = 300,300
-       # blank3.position = 450,300
-       # blank4.position = 150,150
-       # blank5.position = 300,150
-       # blank6.position = 450,150
-
-        #cat.position = 150,300
-        #rabbit.position = 300,150
-        #deer.position = 450,300
-        #worm.position = 150,150
-
-
-        #self.add(blank1)
-        #self.add(blank2)
-        #self.add(blank3)
-        #self.add(blank4)
-        #self.add(blank5)
-        #self.add(blank6)
-        #self.add(cat)
-        #self.add(rabbit)
-        #self.add(deer)
-        #self.add(worm)
-
-        #self.blank1 = blank1
-        #self.blank2 = blank2
-        #self.blank3 = blank3
-        #self.blank4 = blank4
-        #self.blank5 = blank5
-        #self.blank6 = blank6
-        #self.cat = cat
-        #self.rabbit = rabbit
-        #self.deer = deer
-        #self.worm = worm
-
-
-        #cat.opacity = 0
-        #rabbit.opacity = 0
-        #deer.opacity = 0
-        #worm.opacity = 0
-
-        #animals = [cat, rabbit, deer, worm]
-        #for a in animals:
-        #    a.opacity = 0
 
     def update_text (self, x, y):
         if self.blank1.contains(x,y) or \
