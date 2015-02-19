@@ -5,17 +5,18 @@ from cocos.actions import *
 from cocos.director import director
 from cocos.layer import base_layers
 
+import pyglet
+import cocos
 image_files = ['resources/cat.png', 'resources/rabbit.png', 'resources/deer.png', 'resources/worm.png']
 blank_file = 'resources/blank.png'
 
 class Cards(object):
     def __init__(self, image_file, blank_file):
-        self.image = pyglet.image.load(image_file)
-        self.blank = pyglet.image.load(blank_file)
+        self.image = cocos.sprite.Sprite(pyglet.image.load(image_file))
+        self.blank = cocos.sprite.Sprite(pyglet.image.load(blank_file))
         self.unique_id = image_file
 
 card_deck = [Cards(file, blank_file) for file in image_files]
-
 
 class Martha(cocos.layer.ColorLayer):
     is_event_handler = True
@@ -34,7 +35,7 @@ class Martha(cocos.layer.ColorLayer):
         label.position = 320,440
         self.add( label )
 
-    positions = [(150,300), (300,300), (450,300), (150,150), (300,150), (450,150)]
+    positions = [(150,300), (300,300), (450,300), (150,150)] #, (300,150), (450,150)]
     for position, card in zip(positions, card_deck):
         card.blank.position = position
         card.image.position = position
@@ -70,7 +71,6 @@ class Martha(cocos.layer.ColorLayer):
 
 if __name__ == "__main__":
     cocos.director.director.init(resizable=True)
-    # We create a new layer, an instance of HelloWorld
     martha_layer = Martha()
     main_scene = cocos.scene.Scene(martha_layer)
     cocos.director.director.run(main_scene)
