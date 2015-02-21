@@ -42,7 +42,6 @@ class Hand(object):
 
         self.posxy = zip(x_position, y_position)
 
-
 class Martha(cocos.layer.ColorLayer):
     is_event_handler = True
     def __init__(self, hand, cards):
@@ -91,8 +90,11 @@ class Martha(cocos.layer.ColorLayer):
 
     def on_mouse_press (self, x, y, buttons, modifiers):
         for card in cards:
-            if card.blank.contains(x,y) == True :
+            if card.blank.contains(x,y) == True and card.image.opacity == 0:
                 card.image.opacity = 255
+            else:
+                if card.blank.contains(x,y) == True and card.image.opacity == 255:
+                    card.image.opacity = 0
 
 
 
