@@ -1,4 +1,4 @@
-from __future__ import division, unicode_literals
+#from __future__ import division, unicode_literals
 import pyglet
 import cocos
 import random
@@ -10,6 +10,8 @@ image_files = ['resources/cat.png', 'resources/rabbit.png', 'resources/deer.png'
                'resources/worm.png', 'resources/martha.png', 'resources/planet.png']
 blank_file = 'resources/blank.png'
 button = 'resources/button.png'
+
+counter = 0
 
 class Cards(object):
     def __init__(self, image_file, blank_file):
@@ -27,7 +29,7 @@ class Hand(object):
         shuffled = random.sample(cards, len(cards))
         self.shuffled = shuffled
 
-        sprite_size = 120
+        sprite_size = 100
 
         x_position = []
         for i in range(width):
@@ -44,6 +46,10 @@ class Hand(object):
         self.posxy = zip(x_position, y_position)
 
 class Martha(cocos.layer.ColorLayer):
+    """
+    here is a dostrimgg
+
+    """
     is_event_handler = True
     def __init__(self, hand, cards):
         super( Martha, self).__init__(0,0,0,255)
@@ -53,9 +59,9 @@ class Martha(cocos.layer.ColorLayer):
         self.posy = 240
         self.text = cocos.text.Label(font_size=18, x=10, y=10 , color = (0,0,0,0))
         self.add( self.text )
+        self.click = []
         self.click1 = []
         self.click2 = []
-        self.points = 0
 
         label = cocos.text.Label('Matching Martha',
             font_name='Courier',
@@ -68,7 +74,7 @@ class Martha(cocos.layer.ColorLayer):
         self.add(self.score)
 
         self.button = cocos.sprite.Sprite(pyglet.image.load(button))
-        #self.button.position = 320, 600
+        self.button.position = 320, 600
         #self.add(self.button)
 
         for posxy, card in zip(hand.posxy, cards):
@@ -77,31 +83,36 @@ class Martha(cocos.layer.ColorLayer):
             self.add(card.blank)
             self.add(card.image)
 
+    #refer to cards instead of to file_name
     def on_mouse_press(self, x, y, buttons, modifiers):
-        #while self.points < 7:
+        global counter
         for card in cards:
-            if card.blank.contains(x,y) and card.image.opacity == 0 and self.click1 == []:
+            if card.blank.contains(x,y) and card.image.opacity == 0:
                 card.image.opacity = 255
-                self.click1.append(card.image_file)
-                print "number one %s" % self.click1
-            else:
-                if card.blank.contains(x,y) and card.image.opacity == 0 and self.click2 == []:
-                    card.image.opacity = 255
-                    self.click2.append(card.image_file)
-                    print "number two %" % self.click2
-            if self.click1 == self.click2:
-                self.points += 1
-            self.click1 = []
-            self.click2 = []
-            #print self.points
+                counter += 1
+                print "Counter is at: %s" % counter
+                self.click.append(card)
+                if counter == 3 and self.click[0].image_file != self.click[1].image_file:
+                    for card in self.click:
+                        card.image.opacity = 0
+                    counter = 0
+                    self.click = []
+
+                elif counter == 3 and self.click[0].image_file == self.click[1].image_file:
+                    counter = 1
+                    self.click = []
+                    self.click.append(card)
+                print self.click
+
+
 
 
 if __name__ == "__main__":
     cocos.director.director.init(height = 690, width = 640)
     hand = Hand(image_files, 3, 4)
-    cards = []
-    for i in hand.shuffled:
-        cards.append(Cards(i, blank_file))
+    cards = [Cards(file, blank_file) for file in hand.shuffled]
+    #for i in hand.shuffled:
+    #    cards.append(Cards(i, blank_file))
     martha_layer = Martha(hand, cards)
     main_scene = cocos.scene.Scene(martha_layer)
     cocos.director.director.run(main_scene)
