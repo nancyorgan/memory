@@ -216,7 +216,7 @@ class Settings(cocos.layer.Layer):
         self.text.element.text = text
 
     def on_key_press(self, k, m):
-        if k <= key.Z and k >= key.A:
+        if (k <= key.Z and k >= key.A) or (k <= 0x030 and k >= 0x039):
             self.keys_pressed.append(k)
             self.update_text()
         elif k == key.BACKSPACE and len(self.keys_pressed) > 0:
