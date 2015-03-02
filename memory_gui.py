@@ -1,4 +1,5 @@
 #from __future__ import division, unicode_literals
+import os, sys
 import pyglet
 import cocos
 import random
@@ -10,7 +11,6 @@ from cocos.scene import Scene
 from cocos.scenes.transitions import *
 from cocos.sprite import Sprite
 from pyglet import gl, font
-
 from pyglet.window import key
 #################### Global Variables #################
 
@@ -38,9 +38,8 @@ class Hand(object):
         cards = random.sample(image_files, int((height*width)/2))*2
         shuffled = random.sample(cards, len(cards))
         self.shuffled = shuffled
-
-        x,y = director.get_window_size()
         sprite_size = (480 - 5*(width-1))/width
+        self.sprite_size = sprite_size
 
         x_position = []
         for i in range(width):
@@ -87,14 +86,17 @@ class Martha(cocos.layer.ColorLayer):
         for posxy, card in zip(hand.posxy, cards):
             card.blank.position = posxy
             card.image.position = posxy
+            card.image.scale = hand.sprite_size/float(card.image.image.width)
+            card.blank.scale = hand.sprite_size/float(card.blank.image.width)
             self.add(card.blank)
             self.add(card.image)
+
 
     def update_text (self, score):
         text = str(score)
         self.text.element.text = text
-        self.text.element.x = director.get_window_size()[0]/2 + 100,
-        self.text.element.y = director.get_window_size()[1] - 100,
+        self.text.element.x = director.get_window_size()[0]/2 + 10
+        self.text.element.y = director.get_window_size()[1] - 130
 
 
     def on_mouse_press(self, x, y, buttons, modifiers):
@@ -122,52 +124,121 @@ class Martha(cocos.layer.ColorLayer):
                 print self.click
                 print score
 
-
-
 class WelcomeScreen(cocos.layer.ColorLayer):
     is_event_handler = True
     def __init__(self):
         super( WelcomeScreen, self).__init__(0,0,0,255)
 
-        self.text_title = pyglet.text.Label("Matching Martha",
-            font_size = 32,
-            font_name ='Courier',
-            y = director.get_window_size()[1] - 200,
-            x = director.get_window_size()[0]/2,
-            anchor_x = "center",
-            anchor_y = "center")
+        self.text_title = cocos.text.Label("Matching Martha",
+                                font_size = 32,
+                                font_name ='Courier',
+                                y = director.get_window_size()[1] - 200,
+                                x = director.get_window_size()[0]/2,
+                                anchor_x = "center",
+                                anchor_y = "center")
 
-        self.text_subtitle = pyglet.text.Label("Hit Enter to play!",
-            font_size=18,
-            font_name = 'Courier',
-            y = director.get_window_size()[1] - 300,
-            x = director.get_window_size()[0]/2,
-            anchor_x="center",
-            anchor_y="center")
-
+        self.text_subtitle = cocos.text.Label("Hit Enter to play!",
+                                font_size=18,
+                                font_name = 'Courier',
+                                y = director.get_window_size()[1] - 300,
+                                x = director.get_window_size()[0]/2,
+                                anchor_x="center",
+                                anchor_y="center")
 
     def draw(self):
         self.text_title.draw()
         self.text_subtitle.draw()
 
     def on_key_press(self, k, m):
-        global main_scene
         if k == key.ENTER:
             director.replace(FadeTransition(
-                main_scene,
+                settings_scene,
                 1)
             )
+
+class Settings(cocos.layer.Layer):
+    is_event_handler = True
+    def __init__(self):
+        super(Settings, self).__init__()
+
+        self.label = cocos.text.Label('Pick a name:',
+                                    font_name='Courier',
+                                    font_size=32,
+                                    anchor_x='center', anchor_y='center',
+                                    x = director.get_window_size()[0]/2,
+                                    y = director.get_window_size()[1] - 200)
+
+        self.text = cocos.text.Label("", x = director.get_window_size()[0]/2 - 30,
+                                    y = director.get_window_size()[1] - 300,
+                                    font_name = "Courier",
+                                    font_size = 18,
+                                    anchor_x='center')
+
+        self.dim_label = cocos.text.Label('...and board size:',
+                                    font_name='Courier',
+                                    font_size=24,
+                                    anchor_x='center', anchor_y='center',
+                                    x = director.get_window_size()[0]/2,
+                                    y = director.get_window_size()[1] - 400)
+
+        self.dim_x = cocos.text.Label("___", x = director.get_window_size()[0]/2 - 50,
+                                    y = director.get_window_size()[1] - 500,
+                                    font_name = "Courier",
+                                    font_size = 24,
+                                    anchor_x='center')
+
+        self.by = cocos.text.Label("x", x = director.get_window_size()[0]/2,
+                                    y = director.get_window_size()[1] - 500,
+                                    font_name = "Courier",
+                                    font_size = 24,
+                                    anchor_x='center')
+
+        self.dim_y = cocos.text.Label("___", x = director.get_window_size()[0]/2 + 50,
+                                    y = director.get_window_size()[1] - 500,
+                                    font_name = "Courier",
+                                    font_size = 18,
+                                    anchor_x='center')
+
+        self.keys_pressed = []
+        self.update_text()
+
+    def draw(self):
+        self.label.draw()
+        self.text.draw()
+        self.dim_label.draw()
+        self.dim_x.draw()
+        self.by.draw()
+        self.dim_y.draw()
+
+    def update_text(self):
+        key_names = [pyglet.window.key.symbol_string(k) for k in self.keys_pressed]
+        text = ''.join(key_names)
+        self.text.element.text = text
+
+    def on_key_press(self, k, m):
+        if k <= key.Z and k >= key.A:
+            self.keys_pressed.append(k)
+            self.update_text()
+        elif k == key.BACKSPACE and len(self.keys_pressed) > 0:
+            self.keys_pressed.pop()
+            self.update_text()
+        elif k == key.ENTER:
+            director.replace(FadeTransition(
+                main_scene, 1))
+
 
 if __name__ == "__main__":
     cocos.director.director.init(height = 690, width = 640)
 
-    hand = Hand(image_files, height = 3, width = 4)
-    cards = [Cards(file, blank_file) for file in hand.shuffled]
-
     welcome = WelcomeScreen()
+    settings = Settings()
+
+    hand = Hand(image_files, height = 2, width = 2)
+    cards = [Cards(file, blank_file) for file in hand.shuffled]
     martha = Martha(hand, cards)
 
     welcome_scene = cocos.scene.Scene(welcome)
+    settings_scene = cocos.scene.Scene(settings)
     main_scene = cocos.scene.Scene(martha)
 
     cocos.director.director.run(welcome_scene)
