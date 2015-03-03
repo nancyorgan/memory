@@ -61,12 +61,6 @@ class Martha(cocos.layer.ColorLayer):
         self.hand = hand
         self.click = []
 
-        self.text = cocos.text.Label(str(score), font_size=24,
-           y = director.get_window_size()[1] - 113,
-           x = director.get_window_size()[0]/2)
-        self.add(self.text)
-
-
         label = cocos.text.Label('Matching Martha',
             font_name='Courier',
             font_size=32,
@@ -74,13 +68,11 @@ class Martha(cocos.layer.ColorLayer):
         label.position = 320,650
         self.add( label )
 
-        self.scorelabel = cocos.text.Label("Score:",
+        self.scorelabel = cocos.text.Label("Score: %s" % str(score),
             font_name = "Courier",
             font_size=24,
-            anchor_x = "center",
-            anchor_y='center',
             y = director.get_window_size()[1] - 100,
-            x = director.get_window_size()[0]/2 -60)
+            x = director.get_window_size()[0]/2 - 100)
         self.add(self.scorelabel)
 
         for posxy, card in zip(hand.posxy, cards):
@@ -93,10 +85,10 @@ class Martha(cocos.layer.ColorLayer):
 
 
     def update_text (self, score):
-        text = str(score)
-        self.text.element.text = text
-        self.text.element.x = director.get_window_size()[0]/2 + 10
-        self.text.element.y = director.get_window_size()[1] - 130
+        text = "Score: %s" % str(score)
+        self.scorelabel.element.text = text
+        self.scorelabel.element.y = director.get_window_size()[1] - 100
+        self.scorelabel.element.x = director.get_window_size()[0]/2 - 100
 
 
     def on_mouse_press(self, x, y, buttons, modifiers):
@@ -233,7 +225,7 @@ if __name__ == "__main__":
     welcome = WelcomeScreen()
     settings = Settings()
 
-    hand = Hand(image_files, height = 2, width = 2)
+    hand = Hand(image_files, height = 3, width = 4)
     cards = [Cards(file, blank_file) for file in hand.shuffled]
     martha = Martha(hand, cards)
 
