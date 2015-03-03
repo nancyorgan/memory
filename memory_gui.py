@@ -83,13 +83,11 @@ class Martha(cocos.layer.ColorLayer):
             self.add(card.blank)
             self.add(card.image)
 
-
     def update_text (self, score):
         text = "Score: %s" % str(score)
         self.scorelabel.element.text = text
         self.scorelabel.element.y = director.get_window_size()[1] - 100
         self.scorelabel.element.x = director.get_window_size()[0]/2 - 100
-
 
     def on_mouse_press(self, x, y, buttons, modifiers):
         global counter, score
@@ -154,45 +152,45 @@ class Settings(cocos.layer.Layer):
         super(Settings, self).__init__()
 
         self.label = cocos.text.Label('Pick a name:',
-                                    font_name='Courier',
-                                    font_size=32,
-                                    anchor_x='center', anchor_y='center',
-                                    x = director.get_window_size()[0]/2,
-                                    y = director.get_window_size()[1] - 200)
+            font_name='Courier',
+            font_size=32,
+            anchor_x='center', anchor_y='center',
+            x = director.get_window_size()[0]/2,
+            y = director.get_window_size()[1] - 200)
 
         self.text = cocos.text.Label("", x = director.get_window_size()[0]/2 - 30,
-                                    y = director.get_window_size()[1] - 300,
-                                    font_name = "Courier",
-                                    font_size = 18,
-                                    anchor_x='center')
+            y = director.get_window_size()[1] - 300,
+            font_name = "Courier",
+            font_size = 18,
+            anchor_x='center')
 
         self.dim_label = cocos.text.Label('...and board size:',
-                                    font_name='Courier',
-                                    font_size=24,
-                                    anchor_x='center', anchor_y='center',
-                                    x = director.get_window_size()[0]/2,
-                                    y = director.get_window_size()[1] - 400)
+            font_name='Courier',
+            font_size=24,
+            anchor_x='center', anchor_y='center',
+            x = director.get_window_size()[0]/2,
+            y = director.get_window_size()[1] - 400)
 
-        self.dim_x = cocos.text.Label("___", x = director.get_window_size()[0]/2 - 50,
-                                    y = director.get_window_size()[1] - 500,
-                                    font_name = "Courier",
-                                    font_size = 24,
-                                    anchor_x='center')
+        self.dim_x = cocos.text.Label("", x = director.get_window_size()[0]/2 - 50,
+            y = director.get_window_size()[1] - 500,
+            font_name = "Courier",
+            font_size = 24,
+            anchor_x='center')
 
-        self.by = cocos.text.Label("x", x = director.get_window_size()[0]/2,
-                                    y = director.get_window_size()[1] - 500,
-                                    font_name = "Courier",
-                                    font_size = 24,
-                                    anchor_x='center')
+        self.by = cocos.text.Label("_____ x _____", x = director.get_window_size()[0]/2,
+            y = director.get_window_size()[1] - 500,
+            font_name = "Courier",
+            font_size = 24,
+            anchor_x='center')
 
-        self.dim_y = cocos.text.Label("___", x = director.get_window_size()[0]/2 + 50,
-                                    y = director.get_window_size()[1] - 500,
-                                    font_name = "Courier",
-                                    font_size = 18,
-                                    anchor_x='center')
+        self.dim_y = cocos.text.Label("", x = director.get_window_size()[0]/2 + 50,
+            y = director.get_window_size()[1] - 500,
+            font_name = "Courier",
+            font_size = 24,
+            anchor_x='center')
 
-        self.keys_pressed = []
-        self.update_text()
+        self.text_fields = [self.text, self.dim_x, self.dim_y]
+        self.active_text_field_index = 0
 
     def draw(self):
         self.label.draw()
@@ -202,22 +200,46 @@ class Settings(cocos.layer.Layer):
         self.by.draw()
         self.dim_y.draw()
 
-    def update_text(self):
-        key_names = [pyglet.window.key.symbol_string(k) for k in self.keys_pressed]
-        text = ''.join(key_names)
-        self.text.element.text = text
+    def append_text_to_active_field(self, key_pressed):
+        print "attempting to append ", key_pressed
+        if (self.active_text_field_index == 1 or self.active_text_field_index == 2) and self.is_number(key_pressed):
+            self.text_fields[self.active_text_field_index].element.text += self.key_press_to_char(key_pressed)
+        else:
+            self.text_fields[self.active_text_field_index].element.text += self.key_press_to_char(key_pressed)
+
+    def key_press_to_char(self, key_pressed):
+        if self.is_number(key_pressed):
+            # if it's a number, subtract the key_pressed value for '0' and append
+            return str(key_pressed - 48)
+        else:
+            return pyglet.window.key.symbol_string(key_pressed)
+
+    def delete_text_from_active_field(self):
+        # remove from the end of the active text field
+        self.text_fields[self.active_text_field_index].element.text = \
+            self.text_fields[self.active_text_field_index].element.text[:-1]
+
+    def cycle_active_text_field(self):
+        self.active_text_field_index = (self.active_text_field_index + 1) % 3
+        print ("active text field: %s" % self.active_text_field_index)
+
+    def is_number(self, k):
+        return (k >= 48 and k <= 57)
 
     def on_key_press(self, k, m):
-        if (k <= key.Z and k >= key.A) or (k <= 0x030 and k >= 0x039):
-            self.keys_pressed.append(k)
-            self.update_text()
-        elif k == key.BACKSPACE and len(self.keys_pressed) > 0:
-            self.keys_pressed.pop()
-            self.update_text()
+        print(k)
+        if (k <= key.Z and k >= key.A) or self.is_number(k):
+            self.append_text_to_active_field(k)
+
+        elif k == key.BACKSPACE:
+            self.delete_text_from_active_field()
+
+        elif k == key.TAB:
+            self.cycle_active_text_field()
+
         elif k == key.ENTER:
             director.replace(FadeTransition(
                 main_scene, 1))
-
 
 if __name__ == "__main__":
     cocos.director.director.init(height = 690, width = 640)
@@ -225,6 +247,7 @@ if __name__ == "__main__":
     welcome = WelcomeScreen()
     settings = Settings()
 
+    #hand = Hand(image_files, height = int(settings.dim_x.element.text), width = int(settings.dim_y.element.text))
     hand = Hand(image_files, height = 3, width = 4)
     cards = [Cards(file, blank_file) for file in hand.shuffled]
     martha = Martha(hand, cards)
